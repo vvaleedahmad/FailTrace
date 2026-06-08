@@ -51,7 +51,7 @@
           </svg>
           <span>TRACES</span>
         </a>
-        <a href="#nodes">
+        <a href="#nodes" data-action="nav-note" data-panel="NODES">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
             <circle cx="4" cy="4" r="1.5"></circle>
             <circle cx="12" cy="4" r="1.5"></circle>
@@ -60,7 +60,7 @@
           </svg>
           <span>NODES</span>
         </a>
-        <a href="#config">
+        <a href="#config" data-action="nav-note" data-panel="CONFIG">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
             <path d="M8 2.5v2M8 11.5v2M2.5 8h2M11.5 8h2"></path>
             <circle cx="8" cy="8" r="2.2"></circle>
@@ -70,16 +70,16 @@
       </nav>
 
       <div class="sidebar-footer">
-        <button class="scan-btn" type="button">INITIATE_SCAN</button>
+        <button class="scan-btn" type="button" data-action="scan">INITIATE_SCAN</button>
         <div class="sidebar-links">
-          <a href="#logs">
+          <a href="#logs" data-action="logs">
             <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
               <path d="M3 3h10v10H3z"></path>
               <path d="M5 6h6M5 9h6"></path>
             </svg>
             SYSTEM_LOGS
           </a>
-          <a href="#logout" class="danger">
+          <a href="#logout" class="danger" data-action="terminate">
             <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
               <path d="M6 3H3v10h3"></path>
               <path d="M8 5l3 3-3 3"></path>
@@ -106,28 +106,28 @@
             <div class="dot dot-cyan"></div>
             <div>
               <div class="label">API_LATENCY</div>
-              <div class="value">99.9% UPTIME</div>
+              <div class="value" id="main-uptime">99.9% UPTIME</div>
             </div>
           </div>
           <div class="metric">
             <div class="dot dot-green"></div>
             <div>
               <div class="label">QUEUE_STATUS</div>
-              <div class="value text-green">ACTIVE</div>
+              <div class="value text-green" id="main-queue">ACTIVE</div>
             </div>
           </div>
           <div class="metric">
             <div class="dot dot-cyan"></div>
             <div>
               <div class="label">WORKERS</div>
-              <div class="value">12 ONLINE</div>
+              <div class="value" id="main-workers">12 ONLINE</div>
             </div>
           </div>
           <div class="metric">
             <div class="dot dot-red"></div>
             <div>
               <div class="label">FAILURE_RATE</div>
-              <div class="value text-red">0.04% CRIT</div>
+              <div class="value text-red" id="main-failure">0.04% CRIT</div>
             </div>
           </div>
         </div>
@@ -139,25 +139,25 @@
                 <span class="pulse-dot compact"></span>
                 REALTIME_INGEST_PIPELINE
               </div>
-              <div class="state">AUTO_SCROLL: ON</div>
+              <button class="state state-button" type="button" data-action="toggle-scroll" data-stream="main">AUTO_SCROLL: ON</button>
             </div>
             <div class="terminal">
               <div class="terminal-stream" id="main-stream"></div>
               <div class="cta-row">
-                <button class="cta" type="button">
+                <button class="cta" type="button" data-action="replay" data-stream="main">
                   <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
                     <path d="M5 3v10l8-5z"></path>
                   </svg>
                   REPLAY_REQUEST
                 </button>
-                <button class="cta alt" type="button">
+                <button class="cta alt" type="button" data-action="view" data-stream="main">
                   <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
                     <path d="M2 8h12"></path>
                     <path d="M8 2l4 6-4 6"></path>
                   </svg>
                   VIEW_TRACE
                 </button>
-                <button class="cta warn" type="button">
+                <button class="cta warn" type="button" data-action="analyze" data-stream="main">
                   <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
                     <circle cx="8" cy="8" r="6"></circle>
                     <path d="M8 4.5v4l2 2"></path>
@@ -173,30 +173,31 @@
               <div class="panel-head">
                 <div class="title text-green">
                   <span class="pulse-dot green"></span>
-                  TRACE_V_092
+                  <span id="main-trace-title">TRACE_V_092</span>
                 </div>
                 <div class="state">HOP GRAPH</div>
               </div>
               <div class="topology-stage">
-                <div class="image-card embedded">
+                <button class="image-card embedded visual-button" type="button" data-action="visualize" data-stream="main" aria-label="Toggle topology focus">
                   <img src="./assets/images/topology.png" alt="System topology" />
                   <div class="overlay"></div>
-                </div>
+                </button>
                 <div class="stats-overlay">
                   <div class="stats-stack stats-card">
-                    <div class="stack-row"><span>TRACE_ID</span><span>FT-9928-AX-001</span></div>
-                    <div class="stack-row"><span>NODE_HOP</span><span>12 / 64</span></div>
-                    <div class="stack-row"><span>HEX_SEED</span><span class="text-green">0x7F2A01BC</span></div>
-                    <div class="bar"><span></span></div>
+                    <div class="stack-row"><span>TRACE_ID</span><span id="main-trace-id">SELECT_REQUEST</span></div>
+                    <div class="stack-row"><span>NODE_HOP</span><span id="main-node-hop">-- / 64</span></div>
+                    <div class="stack-row"><span>HEX_SEED</span><span class="text-green" id="main-seed">0x00000000</span></div>
+                    <div class="bar"><span id="main-progress"></span></div>
                   </div>
                 </div>
               </div>
             </div>
 
             <div class="panel right-meta">
-              <div class="mini-row"><span>ROUTE</span><span>/api/v2/traces</span></div>
-              <div class="mini-row"><span>MODE</span><span>FORENSIC</span></div>
-              <div class="mini-row"><span>SIGNAL</span><span class="text-green">STABLE</span></div>
+              <div class="mini-row"><span>ROUTE</span><span id="main-route">SELECT A REQUEST</span></div>
+              <div class="mini-row"><span>MODE</span><span id="main-mode">FORENSIC</span></div>
+              <div class="mini-row"><span>SIGNAL</span><span class="text-green" id="main-signal">STABLE</span></div>
+              <div class="action-output" id="main-output">Select a request row, then choose an action.</div>
             </div>
           </div>
         </div>
@@ -216,28 +217,28 @@
             <div class="dot dot-cyan"></div>
             <div>
               <div class="label">LATENCY</div>
-              <div class="value">99.9%</div>
+              <div class="value" id="live-uptime">99.9%</div>
             </div>
           </div>
           <div class="metric float-5">
             <div class="dot dot-green"></div>
             <div>
               <div class="label">QUEUE</div>
-              <div class="value text-green">ACTIVE</div>
+              <div class="value text-green" id="live-queue">ACTIVE</div>
             </div>
           </div>
           <div class="metric float-6">
             <div class="dot dot-purple"></div>
             <div>
               <div class="label">WORKERS</div>
-              <div class="value text-purple-soft">12 ONLINE</div>
+              <div class="value text-purple-soft" id="live-workers">12 ONLINE</div>
             </div>
           </div>
           <div class="metric">
             <div class="dot dot-red"></div>
             <div>
               <div class="label">FAILURE</div>
-              <div class="value text-red">0.04%</div>
+              <div class="value text-red" id="live-failure">0.04%</div>
             </div>
           </div>
         </div>
@@ -249,25 +250,25 @@
                 <span class="pulse-dot"></span>
                 REALTIME_INGEST_PIPELINE
               </div>
-              <div class="state">SCROLL: ON</div>
+              <button class="state state-button" type="button" data-action="toggle-scroll" data-stream="live">SCROLL: ON</button>
             </div>
             <div class="terminal">
               <div class="terminal-stream" id="live-stream"></div>
               <div class="cta-row">
-                <button class="cta" type="button">
+                <button class="cta" type="button" data-action="replay" data-stream="live">
                   <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
                     <path d="M5 3v10l8-5z"></path>
                   </svg>
                   REPLAY_REQUEST
                 </button>
-                <button class="cta alt" type="button">
+                <button class="cta alt" type="button" data-action="view" data-stream="live">
                   <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
                     <path d="M2 8h12"></path>
                     <path d="M8 2l4 6-4 6"></path>
                   </svg>
                   VIEW_TRACE
                 </button>
-                <button class="cta purple" type="button">
+                <button class="cta purple" type="button" data-action="analyze" data-stream="live">
                   <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
                     <circle cx="8" cy="8" r="6"></circle>
                     <path d="M8 4.5v7"></path>
@@ -283,11 +284,11 @@
               <div class="panel-head">
                 <div class="title text-green">
                   <span class="pulse-dot green"></span>
-                  VISUALIZER_0X9A
+                  <span id="live-trace-title">VISUALIZER_0X9A</span>
                 </div>
                 <div class="state">NODE MESH</div>
               </div>
-              <div class="live-visual">
+              <button class="live-visual visual-button" type="button" data-action="visualize" data-stream="live" aria-label="Toggle live visualizer focus">
                 <div class="grid-image"></div>
                 <div class="beam"></div>
                 <div class="svg-wrap">
@@ -303,13 +304,15 @@
                     <path d="M100,280 L100,350" stroke="rgba(255,59,59,.8)" stroke-width="1" stroke-dasharray="2 2"></path>
                   </svg>
                 </div>
-              </div>
+              </button>
             </div>
 
             <div class="panel right-meta">
-              <div class="mini-row"><span>TRACE_ID</span><span>FT-9928-AX</span></div>
-              <div class="mini-row"><span>SEED</span><span class="text-green">0x7F2A01BC</span></div>
-              <div class="bar"><span class="bar-fill-66"></span></div>
+              <div class="mini-row"><span>TRACE_ID</span><span id="live-trace-id">SELECT_REQUEST</span></div>
+              <div class="mini-row"><span>SEED</span><span class="text-green" id="live-seed">0x00000000</span></div>
+              <div class="mini-row"><span>ROUTE</span><span id="live-route">SELECT A REQUEST</span></div>
+              <div class="bar"><span class="bar-fill-66" id="live-progress"></span></div>
+              <div class="action-output" id="live-output">Select a request row, then choose an action.</div>
             </div>
           </div>
         </div>

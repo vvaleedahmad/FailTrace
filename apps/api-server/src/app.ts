@@ -9,6 +9,7 @@ import {
 import { requestTimerMiddleware } from "./modules/failures/request-timer.middleware.js";
 import { responseCaptureMiddleware } from "./modules/failures/response-capture.middleware.js";
 import { analyticsRouter } from "./modules/analytics/analytics.routes.js";
+import { controlCenterRouter } from "./modules/control-center/control-center.routes.js";
 import { persistentRequestLoggerMiddleware } from "./modules/logs/logs.middleware.js";
 import { logsRouter } from "./modules/logs/logs.routes.js";
 import { replayRouter } from "./modules/replay/replay.routes.js";
@@ -40,6 +41,7 @@ app.get("/health", async (_req, res, next) => {
 });
 
 app.use("/api/auth", authRouter);
+app.use("/api/control-center", controlCenterRouter);
 app.use("/api/replays", replayRouter);
 app.use("/api/analytics", analyticsRouter);
 app.use("/api/logs", logsRouter);

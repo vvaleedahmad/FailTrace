@@ -428,6 +428,23 @@
       letter-spacing: 0.08em;
     }
 
+    .state-button {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      padding: 0;
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    .state-button:hover {
+      color: var(--cyan);
+    }
+
+    .state-button.is-off {
+      color: rgba(255, 214, 10, 0.76);
+    }
+
     .terminal {
       position: relative;
       z-index: 1;
@@ -451,9 +468,16 @@
       display: flex;
       gap: 10px;
       align-items: baseline;
+      width: 100%;
       padding: 3px 8px;
       border-left: 1px solid transparent;
       white-space: nowrap;
+      color: rgba(220, 228, 229, 0.78);
+      font: inherit;
+      text-align: left;
+      background: transparent;
+      cursor: pointer;
+      transition: 140ms ease;
     }
 
     .terminal-stream .entry.error {
@@ -463,8 +487,38 @@
       animation: glitch 0.28s ease-in-out;
     }
 
+    .terminal-stream .entry:hover {
+      color: var(--cyan);
+      background: rgba(0, 229, 255, 0.07);
+      border-left-color: rgba(0, 229, 255, 0.56);
+    }
+
+    .terminal-stream .request-row:focus-visible {
+      outline: 1px solid var(--cyan);
+      outline-offset: -1px;
+    }
+
+    .terminal-stream .entry.selected {
+      color: var(--cyan);
+      background: rgba(0, 229, 255, 0.12);
+      border-left-color: var(--cyan);
+      box-shadow: inset 0 0 18px rgba(0, 229, 255, 0.05);
+    }
+
+    .terminal-stream .entry.error.selected {
+      color: #ffb4ab;
+      background: rgba(255, 59, 59, 0.12);
+      border-left-color: var(--red);
+    }
+
     .terminal-stream .time {
       opacity: 0.42;
+      flex: 0 0 auto;
+    }
+
+    .terminal-stream .method {
+      width: 48px;
+      color: var(--green);
       flex: 0 0 auto;
     }
 
@@ -516,6 +570,7 @@
       font-size: 10px;
       border-radius: 0;
       transition: 160ms ease;
+      cursor: pointer;
     }
 
     .cta.alt { border-color: rgba(0, 255, 136, 0.4); color: var(--green); }
@@ -525,6 +580,35 @@
     .cta:hover { background: rgba(0, 229, 255, 0.08); }
     .cta.alt:hover { background: rgba(0, 255, 136, 0.08); }
     .cta.warn:hover { background: rgba(255, 214, 10, 0.08); }
+
+    .action-output {
+      min-height: 44px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(0, 229, 255, 0.14);
+      color: rgba(220, 228, 229, 0.74);
+      font-size: 11px;
+      line-height: 1.55;
+    }
+
+    .action-output::after {
+      content: attr(data-latency);
+      display: block;
+      margin-top: 6px;
+      color: rgba(132, 147, 150, 0.7);
+      font-size: 10px;
+    }
+
+    .action-output.success {
+      color: var(--green);
+    }
+
+    .action-output.warning {
+      color: var(--yellow);
+    }
+
+    .action-output.danger {
+      color: #ffb4ab;
+    }
 
     .side-panel {
       display: flex;
@@ -573,6 +657,26 @@
       border: 0;
       height: 100%;
       background: transparent;
+    }
+
+    .visual-button {
+      appearance: none;
+      width: 100%;
+      padding: 0;
+      color: inherit;
+      font: inherit;
+      text-align: inherit;
+      cursor: pointer;
+      transition: 180ms ease;
+    }
+
+    .visual-button:hover {
+      filter: brightness(1.16);
+    }
+
+    .visual-button.focused {
+      box-shadow: inset 0 0 32px rgba(0, 229, 255, 0.18), 0 0 18px rgba(0, 229, 255, 0.16);
+      border-color: rgba(0, 229, 255, 0.5);
     }
 
     .stats-overlay {
@@ -738,6 +842,7 @@
       width: 66%;
       background: var(--green);
       box-shadow: 0 0 8px rgba(0, 255, 136, 0.45);
+      transition: width 180ms ease;
     }
 
     .bar-fill-66 {
