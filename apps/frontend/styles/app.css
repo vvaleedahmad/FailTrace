@@ -312,14 +312,14 @@
       display: grid;
       grid-template-columns: minmax(0, 1.35fr) minmax(260px, 0.75fr);
       gap: 18px;
-      height: calc(100vh - 124px);
+      height: calc(100vh - 184px);
     }
 
     .metrics {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 16px;
-      margin-bottom: 18px;
+      margin-bottom: 12px;
     }
 
     .metric {
@@ -550,11 +550,22 @@
       flex: 0 0 auto;
     }
 
-    .cta-row {
+    .command-bar {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
-      margin-top: 16px;
+      align-items: center;
+      justify-content: flex-start;
+      margin-bottom: 14px;
+      padding: 12px;
+      border: 1px solid rgba(0, 229, 255, 0.22);
+      background:
+        linear-gradient(90deg, rgba(0, 229, 255, 0.1), rgba(0, 255, 136, 0.04), rgba(255, 59, 59, 0.04)),
+        rgba(7, 12, 14, 0.72);
+      box-shadow: 0 0 18px rgba(0, 229, 255, 0.08);
+      position: sticky;
+      top: 0;
+      z-index: 4;
     }
 
     .cta {
@@ -571,6 +582,7 @@
       border-radius: 0;
       transition: 160ms ease;
       cursor: pointer;
+      min-height: 40px;
     }
 
     .cta.alt { border-color: rgba(0, 255, 136, 0.4); color: var(--green); }
@@ -716,7 +728,7 @@
       display: grid;
       grid-template-columns: minmax(0, 1.4fr) minmax(260px, 0.66fr);
       gap: 18px;
-      height: calc(100vh - 124px);
+      height: calc(100vh - 184px);
     }
 
     .beam {
@@ -994,5 +1006,8 @@
       .screen-grid,
       .live-columns {
         height: auto;
+      }
+      .command-bar {
+        position: static;
       }
     }

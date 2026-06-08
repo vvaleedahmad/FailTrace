@@ -132,6 +132,29 @@
           </div>
         </div>
 
+        <div class="command-bar" aria-label="Selected request actions">
+          <button class="cta" type="button" data-action="replay" data-stream="main">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <path d="M5 3v10l8-5z"></path>
+            </svg>
+            REPLAY_REQUEST
+          </button>
+          <button class="cta alt" type="button" data-action="view" data-stream="main">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <path d="M2 8h12"></path>
+              <path d="M8 2l4 6-4 6"></path>
+            </svg>
+            VIEW_TRACE
+          </button>
+          <button class="cta warn" type="button" data-action="analyze" data-stream="main">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <circle cx="8" cy="8" r="6"></circle>
+              <path d="M8 4.5v4l2 2"></path>
+            </svg>
+            ANALYZE_FAILURE
+          </button>
+        </div>
+
         <div class="screen-grid">
           <div class="panel">
             <div class="panel-head">
@@ -143,28 +166,6 @@
             </div>
             <div class="terminal">
               <div class="terminal-stream" id="main-stream"></div>
-              <div class="cta-row">
-                <button class="cta" type="button" data-action="replay" data-stream="main">
-                  <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-                    <path d="M5 3v10l8-5z"></path>
-                  </svg>
-                  REPLAY_REQUEST
-                </button>
-                <button class="cta alt" type="button" data-action="view" data-stream="main">
-                  <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-                    <path d="M2 8h12"></path>
-                    <path d="M8 2l4 6-4 6"></path>
-                  </svg>
-                  VIEW_TRACE
-                </button>
-                <button class="cta warn" type="button" data-action="analyze" data-stream="main">
-                  <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-                    <circle cx="8" cy="8" r="6"></circle>
-                    <path d="M8 4.5v4l2 2"></path>
-                  </svg>
-                  ANALYZE_FAILURE
-                </button>
-              </div>
             </div>
           </div>
 
@@ -243,6 +244,29 @@
           </div>
         </div>
 
+        <div class="command-bar" aria-label="Selected failure actions">
+          <button class="cta" type="button" data-action="replay" data-stream="live">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <path d="M5 3v10l8-5z"></path>
+            </svg>
+            REPLAY_REQUEST
+          </button>
+          <button class="cta alt" type="button" data-action="view" data-stream="live">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <path d="M2 8h12"></path>
+              <path d="M8 2l4 6-4 6"></path>
+            </svg>
+            VIEW_TRACE
+          </button>
+          <button class="cta purple" type="button" data-action="analyze" data-stream="live">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <circle cx="8" cy="8" r="6"></circle>
+              <path d="M8 4.5v7"></path>
+            </svg>
+            ANALYZE_FAILURE
+          </button>
+        </div>
+
         <div class="live-columns">
           <div class="panel">
             <div class="panel-head">
@@ -254,28 +278,6 @@
             </div>
             <div class="terminal">
               <div class="terminal-stream" id="live-stream"></div>
-              <div class="cta-row">
-                <button class="cta" type="button" data-action="replay" data-stream="live">
-                  <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-                    <path d="M5 3v10l8-5z"></path>
-                  </svg>
-                  REPLAY_REQUEST
-                </button>
-                <button class="cta alt" type="button" data-action="view" data-stream="live">
-                  <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-                    <path d="M2 8h12"></path>
-                    <path d="M8 2l4 6-4 6"></path>
-                  </svg>
-                  VIEW_TRACE
-                </button>
-                <button class="cta purple" type="button" data-action="analyze" data-stream="live">
-                  <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-                    <circle cx="8" cy="8" r="6"></circle>
-                    <path d="M8 4.5v7"></path>
-                  </svg>
-                  ANALYZE
-                </button>
-              </div>
             </div>
           </div>
 
