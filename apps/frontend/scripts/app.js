@@ -4,6 +4,7 @@ const state = {
   activeScreen: "main-screen",
   activePanel: "requests",
   apiBaseUrl: localStorage.getItem(storageKeys.apiBaseUrl) ?? defaultApiBaseUrl,
+  adminEmail: localStorage.getItem(storageKeys.adminEmail) ?? "",
   adminToken: localStorage.getItem(storageKeys.adminToken) ?? "",
   autoScroll: {
     main: true,
@@ -22,6 +23,15 @@ const state = {
 
 const elements = {
   sessionTime: document.getElementById("session-time"),
+  auth: {
+    email: document.getElementById("auth-email"),
+    form: document.getElementById("auth-form"),
+    login: document.getElementById("auth-login"),
+    logout: document.getElementById("auth-logout"),
+    note: document.getElementById("auth-note"),
+    status: document.getElementById("auth-status"),
+    password: document.getElementById("auth-password"),
+  },
   screens: Array.from(document.querySelectorAll(".screen")),
   tabs: Array.from(document.querySelectorAll(".tab[data-target]")),
   navLinks: Array.from(document.querySelectorAll(".nav a[data-target]")),
@@ -113,6 +123,42 @@ function writeOutput(streamKey, message, tone = "normal") {
   output.textContent = message;
   output.classList.remove("success", "warning", "danger");
   if (tone !== "normal") output.classList.add(tone);
+}
+
+function setAuthNote(message, tone = "normal") {
+  elements.auth.note.textContent = message;
+  elements.auth.note.classList.remove("text-green", "text-red");
+  if (tone === "success") elements.auth.note.classList.add("text-green");
+  if (tone === "danger") elements.auth.note.classList.add("text-red");
+}
+
+function renderAuthStatus() {
+  const signedIn = Boolean(state.adminToken);
+  elements.auth.status.textContent = signedIn
+    ? `SIGNED_IN_AS ${state.adminEmail || "ADMIN"}`
+    : "SIGNED_OUT";
+  elements.auth.status.classList.toggle("is-signed-out", !signedIn);
+  elements.auth.status.classList.toggle("is-error", false);
+  elements.auth.login.textContent = signedIn ? "UPDATE" : "LOGIN";
+}
+
+function storeAuthSession(email, token) {
+  state.adminEmail = email;
+  state.adminToken = token;
+  localStorage.setItem(storageKeys.adminEmail, state.adminEmail);
+  localStorage.setItem(storageKeys.adminToken, state.adminToken);
+  renderAuthStatus();
+}
+
+function clearAuthSession(note = "Admin session cleared.") {
+  state.adminEmail = "";
+  state.adminToken = "";
+  localStorage.removeItem(storageKeys.adminEmail);
+  localStorage.removeItem(storageKeys.adminToken);
+  elements.auth.email.value = "";
+  elements.auth.password.value = "";
+  renderAuthStatus();
+  setAuthNote(note, "warning");
 }
 
 function requestKey(request) {
@@ -239,6 +285,8 @@ function renderMetrics() {
 }
 
 function renderAll() {
+  renderAuthStatus();
+
   const mainRequests = getRequests("main");
   const liveRequests = getRequests("live");
 
@@ -292,6 +340,34 @@ async function loadControlCenterData() {
   }
 }
 
+async function loginAdmin(event) {
+  event.preventDefault();
+
+  const email = elements.auth.email.value.trim();
+  const password = elements.auth.password.value;
+
+  if (!email || !password) {
+    setAuthNote("Enter an email and password to sign in.", "danger");
+    return;
+  }
+
+  try {
+    setAuthNote("Signing in to the admin API...", "normal");
+    const payload = await fetchJson("/api/auth/login", {
+      body: JSON.stringify({ email, password }),
+      method: "POST",
+    });
+
+    storeAuthSession(payload.admin?.email ?? email, payload.token);
+    elements.auth.password.value = "";
+    setAuthNote(`Signed in as ${state.adminEmail}. Replay access enabled.`, "success");
+    await loadControlCenterData();
+  } catch (error) {
+    renderAuthStatus();
+    setAuthNote(`Login failed: ${error instanceof Error ? error.message : "unknown error"}`, "danger");
+  }
+}
+
 async function refreshData() {
   if (document.hidden) return;
   await loadControlCenterData();
@@ -310,13 +386,10 @@ async function replayRequest(streamKey) {
   }
 
   if (!state.adminToken) {
-    const token = window.prompt("Enter an admin JWT for the protected replay endpoint:");
-    if (!token) {
-      writeOutput(streamKey, "Replay cancelled. Admin JWT is required for the real replay endpoint.", "warning");
-      return;
-    }
-    state.adminToken = token.trim();
-    localStorage.setItem(storageKeys.adminToken, state.adminToken);
+    setAuthNote("Sign in with admin credentials before replaying failures.", "danger");
+    elements.auth.email.focus();
+    writeOutput(streamKey, "Replay cancelled. Use the admin login panel first.", "warning");
+    return;
   }
 
   try {
@@ -422,21 +495,20 @@ function showConfig() {
   const streamKey = activeStreamKey();
   const config = state.data?.config;
   const database = state.data?.database;
-  const nextBaseUrl = window.prompt("API base URL for this static frontend:", state.apiBaseUrl);
+  const nextBaseUrl = window.prompt("API base URL for this frontend:", state.apiBaseUrl);
   if (nextBaseUrl) {
     state.apiBaseUrl = nextBaseUrl.trim().replace(/\/$/, "");
     localStorage.setItem(storageKeys.apiBaseUrl, state.apiBaseUrl);
-  }
-  const nextToken = window.prompt("Admin JWT for protected replay calls (leave blank to keep current):", state.adminToken ? "[stored]" : "");
-  if (nextToken && nextToken !== "[stored]") {
-    state.adminToken = nextToken.trim();
-    localStorage.setItem(storageKeys.adminToken, state.adminToken);
   }
 
   const configText = config && database
     ? `DB connected via ${database.provider}. env=${config.nodeEnv}, replayQueue=${config.replayQueueEnabled}, syncConcurrency=${config.replaySyncConcurrency}, apiBase=${state.apiBaseUrl}.`
     : `API base set to ${state.apiBaseUrl}. Refreshing database config...`;
   writeOutput(streamKey, configText, "success");
+  setAuthNote(state.adminToken
+    ? `Signed in as ${state.adminEmail || "ADMIN"} for replay access.`
+    : "Sign in with admin credentials to enable replay actions.",
+  state.adminToken ? "success" : "normal");
   void loadControlCenterData();
 }
 
@@ -459,6 +531,14 @@ function switchScreen(targetId) {
 }
 
 function bindEvents() {
+  elements.auth.form.addEventListener("submit", (event) => {
+    void loginAdmin(event);
+  });
+
+  elements.auth.logout.addEventListener("click", () => {
+    clearAuthSession();
+  });
+
   elements.tabs.forEach((tab) => {
     tab.addEventListener("click", () => switchScreen(tab.dataset.target));
   });
@@ -508,6 +588,13 @@ function startSessionClock() {
 function initBoot() {
   writeBoot("main", `Connecting to ${state.apiBaseUrl}/api/control-center`, 35);
   writeBoot("live", "Waiting for database-backed telemetry", 35);
+  renderAuthStatus();
+  setAuthNote(
+    state.adminToken
+      ? `Signed in as ${state.adminEmail || "ADMIN"}.`
+      : "Use admin credentials to unlock replay access.",
+    state.adminToken ? "success" : "normal",
+  );
 }
 
 bindEvents();

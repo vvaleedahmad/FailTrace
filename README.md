@@ -1,6 +1,6 @@
 # FailTrace
 
-FailTrace is a TypeScript API and static control-center frontend for logging API failures, tracking request traces, and replaying failed requests through synchronous or queue-backed workflows.
+FailTrace is a TypeScript API and browser control center for logging API failures, tracking request traces, and replaying failed requests through synchronous or queue-backed workflows.
 
 ## Requirements
 
@@ -54,7 +54,7 @@ The API listens on `PORT` from `apps/api-server/.env`, defaulting to `4000`.
 
 ## Frontend
 
-The frontend lives in `apps/frontend` and is a static browser app generated from the FailTrace Control Center Stitch screens.
+The frontend lives in `apps/frontend` and is a browser app generated from the FailTrace Control Center Stitch screens. It now pulls live API data for requests, analytics, nodes, and config, and includes an admin login panel for replay access.
 
 ```text
 apps/frontend/
@@ -66,6 +66,13 @@ apps/frontend/
 ```
 
 Open `apps/frontend/index.html` directly in a browser to view the control center. The UI is intentionally dependency-free so it can be inspected without a build step.
+
+The dashboard includes:
+
+- live request rows backed by `ApiLog` and `FailureLog`
+- replay comparison details backed by `ReplayResult`
+- an admin login panel for JWT-backed replay access
+- analytics summaries and node health derived from the database
 
 ## Docker
 

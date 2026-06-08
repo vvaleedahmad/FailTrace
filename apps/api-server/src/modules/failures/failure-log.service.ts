@@ -1,5 +1,6 @@
 import { prisma } from "../../db.js";
 import { toOptionalJson, toRequiredJson } from "../../shared/prisma-json.js";
+import { sanitizeSensitiveData } from "../../shared/sanitize.js";
 
 type FailureLogInput = {
   traceId?: string;
@@ -19,6 +20,12 @@ type FailureLogInput = {
 };
 
 export const createFailureLog = async (input: FailureLogInput) => {
+  const sanitizedQueryParams = sanitizeSensitiveData(input.queryParams);
+  const sanitizedRequestHeaders = sanitizeSensitiveData(input.requestHeaders);
+  const sanitizedRequestBody = sanitizeSensitiveData(input.requestBody);
+  const sanitizedResponseHeaders = sanitizeSensitiveData(input.responseHeaders);
+  const sanitizedResponseBody = sanitizeSensitiveData(input.responseBody);
+
   await prisma.failureLog.create({
     data: {
       traceId: input.traceId,
@@ -26,12 +33,12 @@ export const createFailureLog = async (input: FailureLogInput) => {
       endpoint: input.endpoint,
       path: input.path,
       originalUrl: input.originalUrl,
-      queryParams: toRequiredJson(input.queryParams),
-      requestHeaders: toRequiredJson(input.requestHeaders),
-      requestBody: toOptionalJson(input.requestBody),
+      queryParams: toRequiredJson(sanitizedQueryParams),
+      requestHeaders: toRequiredJson(sanitizedRequestHeaders),
+      requestBody: toOptionalJson(sanitizedRequestBody),
       responseStatus: input.responseStatus,
-      responseHeaders: toOptionalJson(input.responseHeaders),
-      responseBody: toOptionalJson(input.responseBody),
+      responseHeaders: toOptionalJson(sanitizedResponseHeaders),
+      responseBody: toOptionalJson(sanitizedResponseBody),
       errorMessage: input.errorMessage,
       errorStack: input.errorStack,
       durationMs: input.durationMs,

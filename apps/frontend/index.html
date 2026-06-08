@@ -34,6 +34,17 @@
           <div class="sidebar-label">FAILTRACE_OS</div>
         </div>
         <div class="sidebar-sub">V2.0.4_STABLE</div>
+        <form class="auth-panel" id="auth-form">
+          <div class="auth-label">ADMIN_LOGIN</div>
+          <input id="auth-email" class="auth-input" type="email" autocomplete="username" placeholder="admin@email.com" />
+          <input id="auth-password" class="auth-input" type="password" autocomplete="current-password" placeholder="Admin password" />
+          <div class="auth-actions">
+            <button class="auth-btn auth-btn-primary" type="submit" id="auth-login">LOGIN</button>
+            <button class="auth-btn" type="button" id="auth-logout">LOGOUT</button>
+          </div>
+          <div class="auth-status" id="auth-status">SIGNED_OUT</div>
+          <div class="auth-note" id="auth-note">Use admin credentials to unlock replay access.</div>
+        </form>
       </div>
 
       <nav class="nav" aria-label="Primary">

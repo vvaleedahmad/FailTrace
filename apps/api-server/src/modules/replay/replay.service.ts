@@ -4,6 +4,7 @@ import { prisma } from "../../db.js";
 import { Prisma } from "../../generated/prisma/client.js";
 import { runWithConcurrency } from "../../shared/concurrency.js";
 import { isRecord } from "../../shared/object.js";
+import { sanitizeSensitiveData } from "../../shared/sanitize.js";
 import { toOptionalJson } from "../../shared/prisma-json.js";
 import { getErrorMessageFromBody } from "../../shared/response.js";
 import { normalizeForComparison } from "../../shared/stable-json.js";
@@ -179,11 +180,11 @@ const saveReplayResult = async (
       replayResponseHeaders:
         replayedResponse.headers === undefined
           ? undefined
-          : toOptionalJson(replayedResponse.headers),
+          : toOptionalJson(sanitizeSensitiveData(replayedResponse.headers)),
       replayResponseBody:
         replayedResponse.body === undefined
           ? undefined
-          : toOptionalJson(replayedResponse.body),
+          : toOptionalJson(sanitizeSensitiveData(replayedResponse.body)),
       replayErrorMessage: replayedResponse.errorMessage,
       matchedStatus: comparison.matchedStatus,
       matchedBody: comparison.matchedBody,
