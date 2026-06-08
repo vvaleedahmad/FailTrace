@@ -1,0 +1,51 @@
+services:
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+
+  api-server:
+    build:
+      context: .
+      dockerfile: apps/api-server/Dockerfile
+    env_file:
+      - apps/api-server/.env
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      REDIS_URL: redis://redis:6379
+      REPLAY_BASE_URL: http://api-server:4000
+      REPLAY_QUEUE_ENABLED: "true"
+      REPLAY_SYNC_CONCURRENCY: 5
+      REPLAY_JOB_ATTEMPTS: 3
+      REPLAY_JOB_BACKOFF_MS: 5000
+    ports:
+      - "4000:4000"
+    depends_on:
+      - redis
+
+  replay-worker:
+    build:
+      context: .
+      dockerfile: apps/api-server/Dockerfile
+    command: ["node", "dist/src/workers/replay.worker.js"]
+    env_file:
+      - apps/api-server/.env
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      REDIS_URL: redis://redis:6379
+      REPLAY_BASE_URL: http://api-server:4000
+      REPLAY_QUEUE_ENABLED: "true"
+      REPLAY_WORKER_CONCURRENCY: 5
+      REPLAY_JOB_ATTEMPTS: 3
+      REPLAY_JOB_BACKOFF_MS: 5000
+      REPLAY_JOB_MAX_STALLED_COUNT: 3
+      REPLAY_JOB_STALLED_INTERVAL_MS: 30000
+    depends_on:
+      - redis
+      - api-server
+    deploy:
+      replicas: 2

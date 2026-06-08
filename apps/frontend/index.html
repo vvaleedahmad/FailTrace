@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FailTrace Control Center</title>
+  <link rel="stylesheet" href="./styles/app.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true"></div>
+        <div class="brand-title">FailTrace Control Center</div>
+      </div>
+
+      <div class="tabs" role="tablist" aria-label="Screen switcher">
+        <button class="tab" type="button" role="tab" aria-selected="true" aria-pressed="true" data-target="main-screen">Main Terminal</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" aria-pressed="false" data-target="live-screen">Live Interface</button>
+      </div>
+
+      <div class="topbar-meta">
+        <div>
+          COORD: 34.0522 N, 118.2437 W
+          <strong>SESSION: <span id="session-time">00:00:00</span></strong>
+        </div>
+      </div>
+    </header>
+
+    <aside class="sidebar">
+      <div class="sidebar-block">
+        <div class="badge-row">
+          <div class="status-dot"></div>
+          <div class="sidebar-label">FAILTRACE_OS</div>
+        </div>
+        <div class="sidebar-sub">V2.0.4_STABLE</div>
+      </div>
+
+      <nav class="nav" aria-label="Primary">
+        <a href="#main" class="active" data-target="main-screen">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+            <path d="M2 4h12v8H2z"></path>
+            <path d="M5 11h6"></path>
+          </svg>
+          <span>DASHBOARD</span>
+        </a>
+        <a href="#live" data-target="live-screen">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+            <path d="M3 12h10"></path>
+            <path d="M4 10l2-4 2 2 2-5 2 7"></path>
+          </svg>
+          <span>TRACES</span>
+        </a>
+        <a href="#nodes">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+            <circle cx="4" cy="4" r="1.5"></circle>
+            <circle cx="12" cy="4" r="1.5"></circle>
+            <circle cx="8" cy="12" r="1.5"></circle>
+            <path d="M5.4 4h5.2M4.9 5.3l2 4.1M11.1 5.3l-2 4.1"></path>
+          </svg>
+          <span>NODES</span>
+        </a>
+        <a href="#config">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+            <path d="M8 2.5v2M8 11.5v2M2.5 8h2M11.5 8h2"></path>
+            <circle cx="8" cy="8" r="2.2"></circle>
+          </svg>
+          <span>CONFIG</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="scan-btn" type="button">INITIATE_SCAN</button>
+        <div class="sidebar-links">
+          <a href="#logs">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+              <path d="M3 3h10v10H3z"></path>
+              <path d="M5 6h6M5 9h6"></path>
+            </svg>
+            SYSTEM_LOGS
+          </a>
+          <a href="#logout" class="danger">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+              <path d="M6 3H3v10h3"></path>
+              <path d="M8 5l3 3-3 3"></path>
+              <path d="M11 8H5"></path>
+            </svg>
+            LOGOUT
+          </a>
+        </div>
+      </div>
+    </aside>
+
+    <div class="shell">
+      <section id="main-screen" class="screen active" aria-label="Main Terminal">
+        <div class="boot" data-boot="main">
+          <div class="boot-inner">
+            <div class="screen-label"><span class="pulse-dot"></span>Initialization Sequence</div>
+            <div class="boot-lines" id="boot-main"></div>
+            <div class="boot-progress"><span id="progress-main"></span></div>
+          </div>
+        </div>
+
+        <div class="metrics">
+          <div class="metric">
+            <div class="dot dot-cyan"></div>
+            <div>
+              <div class="label">API_LATENCY</div>
+              <div class="value">99.9% UPTIME</div>
+            </div>
+          </div>
+          <div class="metric">
+            <div class="dot dot-green"></div>
+            <div>
+              <div class="label">QUEUE_STATUS</div>
+              <div class="value text-green">ACTIVE</div>
+            </div>
+          </div>
+          <div class="metric">
+            <div class="dot dot-cyan"></div>
+            <div>
+              <div class="label">WORKERS</div>
+              <div class="value">12 ONLINE</div>
+            </div>
+          </div>
+          <div class="metric">
+            <div class="dot dot-red"></div>
+            <div>
+              <div class="label">FAILURE_RATE</div>
+              <div class="value text-red">0.04% CRIT</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="screen-grid">
+          <div class="panel">
+            <div class="panel-head">
+              <div class="title">
+                <span class="pulse-dot compact"></span>
+                REALTIME_INGEST_PIPELINE
+              </div>
+              <div class="state">AUTO_SCROLL: ON</div>
+            </div>
+            <div class="terminal">
+              <div class="terminal-stream" id="main-stream"></div>
+              <div class="cta-row">
+                <button class="cta" type="button">
+                  <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                    <path d="M5 3v10l8-5z"></path>
+                  </svg>
+                  REPLAY_REQUEST
+                </button>
+                <button class="cta alt" type="button">
+                  <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                    <path d="M2 8h12"></path>
+                    <path d="M8 2l4 6-4 6"></path>
+                  </svg>
+                  VIEW_TRACE
+                </button>
+                <button class="cta warn" type="button">
+                  <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                    <circle cx="8" cy="8" r="6"></circle>
+                    <path d="M8 4.5v4l2 2"></path>
+                  </svg>
+                  ANALYZE_FAILURE
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="side-panel">
+            <div class="panel panel-fill">
+              <div class="panel-head">
+                <div class="title text-green">
+                  <span class="pulse-dot green"></span>
+                  TRACE_V_092
+                </div>
+                <div class="state">HOP GRAPH</div>
+              </div>
+              <div class="topology-stage">
+                <div class="image-card embedded">
+                  <img src="./assets/images/topology.png" alt="System topology" />
+                  <div class="overlay"></div>
+                </div>
+                <div class="stats-overlay">
+                  <div class="stats-stack stats-card">
+                    <div class="stack-row"><span>TRACE_ID</span><span>FT-9928-AX-001</span></div>
+                    <div class="stack-row"><span>NODE_HOP</span><span>12 / 64</span></div>
+                    <div class="stack-row"><span>HEX_SEED</span><span class="text-green">0x7F2A01BC</span></div>
+                    <div class="bar"><span></span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel right-meta">
+              <div class="mini-row"><span>ROUTE</span><span>/api/v2/traces</span></div>
+              <div class="mini-row"><span>MODE</span><span>FORENSIC</span></div>
+              <div class="mini-row"><span>SIGNAL</span><span class="text-green">STABLE</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="live-screen" class="screen" aria-label="Live System Interface">
+        <div class="boot" data-boot="live">
+          <div class="boot-inner">
+            <div class="screen-label"><span class="pulse-dot"></span>Initialization Sequence</div>
+            <div class="boot-lines" id="boot-live"></div>
+            <div class="boot-progress"><span id="progress-live"></span></div>
+          </div>
+        </div>
+
+        <div class="metrics">
+          <div class="metric float-4">
+            <div class="dot dot-cyan"></div>
+            <div>
+              <div class="label">LATENCY</div>
+              <div class="value">99.9%</div>
+            </div>
+          </div>
+          <div class="metric float-5">
+            <div class="dot dot-green"></div>
+            <div>
+              <div class="label">QUEUE</div>
+              <div class="value text-green">ACTIVE</div>
+            </div>
+          </div>
+          <div class="metric float-6">
+            <div class="dot dot-purple"></div>
+            <div>
+              <div class="label">WORKERS</div>
+              <div class="value text-purple-soft">12 ONLINE</div>
+            </div>
+          </div>
+          <div class="metric">
+            <div class="dot dot-red"></div>
+            <div>
+              <div class="label">FAILURE</div>
+              <div class="value text-red">0.04%</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="live-columns">
+          <div class="panel">
+            <div class="panel-head">
+              <div class="title">
+                <span class="pulse-dot"></span>
+                REALTIME_INGEST_PIPELINE
+              </div>
+              <div class="state">SCROLL: ON</div>
+            </div>
+            <div class="terminal">
+              <div class="terminal-stream" id="live-stream"></div>
+              <div class="cta-row">
+                <button class="cta" type="button">
+                  <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                    <path d="M5 3v10l8-5z"></path>
+                  </svg>
+                  REPLAY_REQUEST
+                </button>
+                <button class="cta alt" type="button">
+                  <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                    <path d="M2 8h12"></path>
+                    <path d="M8 2l4 6-4 6"></path>
+                  </svg>
+                  VIEW_TRACE
+                </button>
+                <button class="cta purple" type="button">
+                  <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                    <circle cx="8" cy="8" r="6"></circle>
+                    <path d="M8 4.5v7"></path>
+                  </svg>
+                  ANALYZE
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="side-panel">
+            <div class="panel panel-fill">
+              <div class="panel-head">
+                <div class="title text-green">
+                  <span class="pulse-dot green"></span>
+                  VISUALIZER_0X9A
+                </div>
+                <div class="state">NODE MESH</div>
+              </div>
+              <div class="live-visual">
+                <div class="grid-image"></div>
+                <div class="beam"></div>
+                <div class="svg-wrap">
+                  <svg viewBox="0 0 200 400" fill="none" stroke-linecap="square" stroke-linejoin="miter">
+                    <path d="M100,22 L100,50 L50,80 L50,120 L150,120 L150,80 L100,50" stroke="rgba(0,255,136,.9)" stroke-width="1" stroke-dasharray="2 2"></path>
+                    <circle cx="100" cy="22" r="3" fill="rgba(0,255,136,.95)"></circle>
+                    <circle cx="50" cy="120" r="3" fill="rgba(0,255,136,.82)"></circle>
+                    <circle cx="150" cy="120" r="3" fill="rgba(0,255,136,.72)"></circle>
+                    <path d="M50,120 L50,180 L30,220 L70,220 L50,180" stroke="rgba(0,229,255,.85)" stroke-width="1" stroke-dasharray="4 2"></path>
+                    <path d="M150,120 L150,180 L130,220 L170,220 L150,180" stroke="rgba(0,229,255,.85)" stroke-width="1" stroke-dasharray="4 2"></path>
+                    <path d="M30,220 L100,280 L170,220" stroke="rgba(124,58,237,.85)" stroke-width="1" stroke-dasharray="3 2"></path>
+                    <circle cx="100" cy="280" r="3" fill="rgba(124,58,237,.95)"></circle>
+                    <path d="M100,280 L100,350" stroke="rgba(255,59,59,.8)" stroke-width="1" stroke-dasharray="2 2"></path>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel right-meta">
+              <div class="mini-row"><span>TRACE_ID</span><span>FT-9928-AX</span></div>
+              <div class="mini-row"><span>SEED</span><span class="text-green">0x7F2A01BC</span></div>
+              <div class="bar"><span class="bar-fill-66"></span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script src="./scripts/data.js"></script>
+  <script src="./scripts/app.js"></script>
+</body>
+</html>
+

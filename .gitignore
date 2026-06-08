@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+apps/*/node_modules/
+packages/*/node_modules/
+
+# Build outputs
+dist/
+apps/*/dist/
+packages/*/dist/
+apps/*/src/generated/
+apps/frontend/stitch-source/
+.next/
+coverage/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa
+id_ed25519
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local tooling
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Prisma/local caches
+apps/*/node_modules/.cache/

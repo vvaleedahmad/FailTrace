@@ -1,0 +1,30 @@
+{
+  "name": "failtrace",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace apps/api-server",
+    "dev:worker": "npm run dev:worker --workspace apps/api-server",
+    "build": "npm run build --workspace apps/api-server",
+    "start": "npm run start --workspace apps/api-server",
+    "start:worker": "npm run start:worker --workspace apps/api-server",
+    "prisma:generate": "npm run prisma:generate --workspace apps/api-server",
+    "prisma:migrate": "npm run prisma:migrate --workspace apps/api-server",
+    "prisma:push": "npm run prisma:push --workspace apps/api-server",
+    "typecheck": "npm run typecheck --workspace apps/api-server"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "turbo": "^2.9.15",
+    "typescript": "^6.0.3"
+  }
+}

@@ -1,0 +1,88 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model ApiLog {
+  id             String   @id @default(cuid())
+  traceId        String?
+  service        String
+  method         String
+  endpoint       String
+  path           String
+  originalUrl    String
+  statusCode     Int
+  durationMs     Int
+  requestId      String?
+  userAgent      String?
+  ipAddress      String?
+  createdAt      DateTime @default(now())
+
+  @@index([traceId])
+  @@index([endpoint])
+  @@index([createdAt])
+  @@index([statusCode])
+  @@index([service])
+}
+
+model FailureLog {
+  id              String   @id @default(cuid())
+  traceId         String?
+  method          String
+  endpoint        String
+  path            String
+  originalUrl     String
+  queryParams     Json
+  requestHeaders  Json
+  requestBody     Json?
+  responseStatus  Int
+  responseHeaders Json?
+  responseBody    Json?
+  errorMessage    String?
+  errorStack      String?
+  durationMs      Int
+  createdAt       DateTime @default(now())
+  replayResults   ReplayResult[]
+
+  @@index([traceId])
+  @@index([createdAt])
+  @@index([responseStatus])
+}
+
+model ReplayResult {
+  id                   String     @id @default(cuid())
+  traceId              String?
+  failureLogId         String
+  failureLog           FailureLog @relation(fields: [failureLogId], references: [id], onDelete: Cascade)
+  replayUrl            String
+  replayStatus         Int?
+  replayResponseHeaders Json?
+  replayResponseBody   Json?
+  replayErrorMessage   String?
+  matchedStatus        Boolean
+  matchedBody          Boolean
+  matchedErrorMessage  Boolean
+  durationMs           Int
+  createdAt            DateTime   @default(now())
+
+  @@index([traceId])
+  @@index([failureLogId])
+  @@index([createdAt])
+}
