@@ -1,4 +1,6 @@
 import { prisma } from "../../db.js";
+import { toOptionalJson } from "../../shared/prisma-json.js";
+import { sanitizeSensitiveData } from "../../shared/sanitize.js";
 
 type CreateApiLogInput = {
   traceId?: string;
@@ -8,10 +10,21 @@ type CreateApiLogInput = {
   path: string;
   originalUrl: string;
   statusCode: number;
+  statusMessage?: string;
   durationMs: number;
   requestId?: string;
   userAgent?: string;
   ipAddress?: string;
+  host?: string;
+  protocol?: string;
+  httpVersion?: string;
+  queryParams?: unknown;
+  routeParams?: unknown;
+  requestHeaders?: unknown;
+  requestBody?: unknown;
+  responseHeaders?: unknown;
+  responseBody?: unknown;
+  responseContentLength?: string;
 };
 
 type ListApiLogsQuery = {
@@ -62,7 +75,30 @@ const buildLogFilters = (query: ListApiLogsQuery) => {
 
 export const createApiLog = async (input: CreateApiLogInput) => {
   await prisma.apiLog.create({
-    data: input,
+    data: {
+      traceId: input.traceId,
+      service: input.service,
+      method: input.method,
+      endpoint: input.endpoint,
+      path: input.path,
+      originalUrl: input.originalUrl,
+      statusCode: input.statusCode,
+      statusMessage: input.statusMessage,
+      durationMs: input.durationMs,
+      requestId: input.requestId,
+      userAgent: input.userAgent,
+      ipAddress: input.ipAddress,
+      host: input.host,
+      protocol: input.protocol,
+      httpVersion: input.httpVersion,
+      queryParams: toOptionalJson(sanitizeSensitiveData(input.queryParams)),
+      routeParams: toOptionalJson(sanitizeSensitiveData(input.routeParams)),
+      requestHeaders: toOptionalJson(sanitizeSensitiveData(input.requestHeaders)),
+      requestBody: toOptionalJson(sanitizeSensitiveData(input.requestBody)),
+      responseHeaders: toOptionalJson(sanitizeSensitiveData(input.responseHeaders)),
+      responseBody: toOptionalJson(sanitizeSensitiveData(input.responseBody)),
+      responseContentLength: input.responseContentLength,
+    },
   });
 };
 

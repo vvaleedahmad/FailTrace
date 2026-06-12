@@ -105,6 +105,60 @@ function formatAge(value) {
   return `${Math.round(minutes / 60)}h ago`;
 }
 
+function stringifyValue(value) {
+  if (value === null || value === undefined || value === "") return "not captured";
+  if (typeof value === "string") return value;
+  try {
+    return JSON.stringify(value, null, 2);
+  } catch (_error) {
+    return String(value);
+  }
+}
+
+function byteLength(value) {
+  return new Blob([stringifyValue(value)]).size;
+}
+
+function estimateTokens(value) {
+  const text = stringifyValue(value);
+  if (text === "not captured") return 0;
+  return Math.max(1, Math.ceil(text.length / 4));
+}
+
+function createDetailRow(label, value) {
+  const row = document.createElement("div");
+  row.className = "detail-row";
+
+  const key = document.createElement("span");
+  key.textContent = label;
+
+  const val = document.createElement("span");
+  val.textContent = value ?? "not captured";
+
+  row.append(key, val);
+  return row;
+}
+
+function createCodeSection(title, value) {
+  const section = document.createElement("section");
+  section.className = "detail-section";
+
+  const heading = document.createElement("div");
+  heading.className = "detail-section-title";
+  heading.textContent = title;
+
+  const code = document.createElement("pre");
+  code.textContent = stringifyValue(value);
+
+  section.append(heading, code);
+  return section;
+}
+
+function setOutputTone(output, tone = "normal") {
+  output.classList.remove("success", "warning", "danger");
+  if (tone !== "normal") output.classList.add(tone);
+}
+
 function writeBoot(streamKey, line, progress) {
   const row = document.createElement("div");
   row.textContent = `> ${line}`;
@@ -121,8 +175,7 @@ function finishBoot() {
 function writeOutput(streamKey, message, tone = "normal") {
   const output = elements[streamKey].output;
   output.textContent = message;
-  output.classList.remove("success", "warning", "danger");
-  if (tone !== "normal") output.classList.add(tone);
+  setOutputTone(output, tone);
 }
 
 function setAuthNote(message, tone = "normal") {
@@ -252,11 +305,91 @@ function updateSelectionPanel(streamKey) {
     panel.signal.classList.toggle("text-green", request.status < 400);
   }
 
-  writeOutput(
-    streamKey,
-    `Selected real ${request.source} row from ${formatAge(request.createdAt)}: ${request.method} ${request.endpoint}.`,
-    statusTone(request.status),
+  renderRequestBreakdown(streamKey, request);
+}
+
+function renderRequestBreakdown(streamKey, request) {
+  const output = elements[streamKey].output;
+  const replayCount = request.replayResults?.length ?? 0;
+  const capturedRequestBytes = byteLength(request.requestBody);
+  const capturedResponseBytes = byteLength(request.responseBody);
+  const capturedRequestTokens = estimateTokens(request.requestBody);
+  const capturedResponseTokens = estimateTokens(request.responseBody);
+  const fullRecordTokens = estimateTokens(request);
+
+  const wrapper = document.createElement("div");
+  wrapper.className = "request-breakdown";
+
+  const summary = document.createElement("div");
+  summary.className = "detail-summary";
+  summary.append(
+    createDetailRow("METHOD", request.method),
+    createDetailRow("STATUS", String(request.status)),
+    createDetailRow("ROUTE", request.endpoint),
+    createDetailRow("URL", request.originalUrl),
+    createDetailRow("SOURCE", request.source),
+    createDetailRow("AGE", formatAge(request.createdAt)),
+    createDetailRow("DURATION", `${request.durationMs}ms`),
+    createDetailRow("STATUS_MESSAGE", request.statusMessage ?? "not captured"),
+    createDetailRow("TRACE_ID", request.traceId ?? "not captured"),
+    createDetailRow("REQUEST_ID", request.requestId ?? "not captured"),
+    createDetailRow("FAILURE_ID", request.failureId ?? "not captured"),
+    createDetailRow("REPLAYS", String(replayCount)),
   );
+
+  const transportSummary = document.createElement("div");
+  transportSummary.className = "detail-summary";
+  transportSummary.append(
+    createDetailRow("HOST", request.host ?? "not captured"),
+    createDetailRow("PROTOCOL", request.protocol ?? "not captured"),
+    createDetailRow("HTTP_VERSION", request.httpVersion ?? "not captured"),
+    createDetailRow("IP_ADDRESS", request.ipAddress ?? "not captured"),
+    createDetailRow("USER_AGENT", request.userAgent ?? "not captured"),
+    createDetailRow("RESPONSE_CONTENT_LENGTH", request.responseContentLength ?? "not captured"),
+  );
+
+  const tokenSummary = document.createElement("div");
+  tokenSummary.className = "detail-summary";
+  tokenSummary.append(
+    createDetailRow("REQUEST_BYTES", `${capturedRequestBytes}`),
+    createDetailRow("REQUEST_TOKENS_EST", `${capturedRequestTokens}`),
+    createDetailRow("RESPONSE_BYTES", `${capturedResponseBytes}`),
+    createDetailRow("RESPONSE_TOKENS_EST", `${capturedResponseTokens}`),
+    createDetailRow("FULL_RECORD_TOKENS_EST", `${fullRecordTokens}`),
+  );
+
+  const replaySection = createCodeSection("LATEST_REPLAY_RESULTS", request.replayResults ?? []);
+
+  wrapper.append(
+    summary,
+    transportSummary,
+    tokenSummary,
+    createCodeSection("REQUEST_HEADERS", request.requestHeaders),
+    createCodeSection("QUERY_PARAMS", request.queryParams),
+    createCodeSection("ROUTE_PARAMS", request.routeParams),
+    createCodeSection("REQUEST_PAYLOAD", request.requestBody),
+    createCodeSection("RESPONSE_HEADERS", request.responseHeaders),
+    createCodeSection("RESPONSE_BODY", request.responseBody),
+    createCodeSection("ERROR_MESSAGE", request.errorMessage),
+    createCodeSection("ERROR_STACK", request.errorStack),
+    replaySection,
+  );
+
+  const hasCapturedExchange =
+    request.requestHeaders ||
+    request.requestBody ||
+    request.responseHeaders ||
+    request.responseBody;
+
+  if (!hasCapturedExchange && request.source === "apiLog") {
+    const note = document.createElement("div");
+    note.className = "detail-note";
+    note.textContent = "This looks like a legacy ApiLog row from before full request capture was enabled. New rows include headers, payload, response, route params, and transport metadata.";
+    wrapper.prepend(note);
+  }
+
+  output.replaceChildren(wrapper);
+  setOutputTone(output, statusTone(request.status));
 }
 
 function selectRequest(streamKey, requestId) {

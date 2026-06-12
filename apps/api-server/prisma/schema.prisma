@@ -21,19 +21,30 @@ model AdminUser {
 }
 
 model ApiLog {
-  id             String   @id @default(cuid())
-  traceId        String?
-  service        String
-  method         String
-  endpoint       String
-  path           String
-  originalUrl    String
-  statusCode     Int
-  durationMs     Int
-  requestId      String?
-  userAgent      String?
-  ipAddress      String?
-  createdAt      DateTime @default(now())
+  id                    String   @id @default(cuid())
+  traceId               String?
+  service               String
+  method                String
+  endpoint              String
+  path                  String
+  originalUrl           String
+  statusCode            Int
+  statusMessage         String?
+  durationMs            Int
+  requestId             String?
+  userAgent             String?
+  ipAddress             String?
+  host                  String?
+  protocol              String?
+  httpVersion           String?
+  queryParams           Json?
+  routeParams           Json?
+  requestHeaders        Json?
+  requestBody           Json?
+  responseHeaders       Json?
+  responseBody          Json?
+  responseContentLength String?
+  createdAt             DateTime @default(now())
 
   @@index([traceId])
   @@index([endpoint])

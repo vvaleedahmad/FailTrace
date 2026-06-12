@@ -680,7 +680,9 @@
     .cta.warn:hover { background: rgba(255, 214, 10, 0.08); }
 
     .action-output {
-      min-height: 44px;
+      max-height: min(48vh, 560px);
+      min-height: 160px;
+      overflow: auto;
       padding-top: 10px;
       border-top: 1px solid rgba(0, 229, 255, 0.14);
       color: rgba(220, 228, 229, 0.74);
@@ -706,6 +708,71 @@
 
     .action-output.danger {
       color: #ffb4ab;
+    }
+
+    .request-breakdown {
+      display: grid;
+      gap: 12px;
+      min-width: 0;
+      color: rgba(220, 228, 229, 0.84);
+    }
+
+    .detail-note {
+      border: 1px solid rgba(255, 214, 10, 0.28);
+      background: rgba(255, 214, 10, 0.08);
+      color: rgba(255, 214, 10, 0.9);
+      padding: 8px 10px;
+    }
+
+    .detail-summary {
+      display: grid;
+      gap: 5px;
+      padding: 9px 10px;
+      border: 1px solid rgba(0, 229, 255, 0.16);
+      background: rgba(2, 7, 8, 0.46);
+    }
+
+    .detail-row {
+      display: grid;
+      grid-template-columns: minmax(96px, 0.42fr) minmax(0, 1fr);
+      gap: 12px;
+      align-items: baseline;
+      min-width: 0;
+    }
+
+    .detail-row span:first-child,
+    .detail-section-title {
+      color: rgba(132, 147, 150, 0.88);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 9px;
+    }
+
+    .detail-row span:last-child {
+      min-width: 0;
+      overflow-wrap: anywhere;
+      color: rgba(220, 228, 229, 0.92);
+    }
+
+    .detail-section {
+      display: grid;
+      gap: 6px;
+      min-width: 0;
+    }
+
+    .detail-section pre {
+      margin: 0;
+      max-height: 220px;
+      overflow: auto;
+      padding: 9px 10px;
+      border: 1px solid rgba(132, 147, 150, 0.2);
+      background: rgba(3, 7, 8, 0.78);
+      color: rgba(220, 228, 229, 0.86);
+      font: inherit;
+      font-size: 10px;
+      line-height: 1.55;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
     }
 
     .side-panel {
